@@ -2,9 +2,12 @@
 #include "Module.h"
 #include "Globals.h"
 
+#define METERS_TO_PIXELS(a) a * 10
+#define PIXELS_TO_METERS(a) a * 0.1
 
 class b2World;
-class b2BodyDef;
+
+
 class ModulePhysics : public Module
 {
 public:
@@ -19,6 +22,5 @@ public:
 private:
 	
 	b2World* myWorld = nullptr;
-	b2BodyDef groundBodyDef;
 	bool debug;
 };

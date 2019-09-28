@@ -35,14 +35,29 @@ bool ModulePhysics::Start()
 	// - Remember to destroy the world after using it
 	
 	
-	b2Vec2 gravity(0.0f, -10.0f);
-	myWorld = new b2World(gravity);
+	b2Vec2 gravity(0.0f, 10.0f);
+	myWorld = new b2World(gravity);
+
 	// TODO 4: Create a a big static circle as "ground"
 	
-	groundBodyDef.position.Set(0.0f, -10.0f);	b2Body* groundBody = myWorld->CreateBody(&groundBodyDef);	b2PolygonShape groundBox;
+	//BIGCIRCLE
+	b2BodyDef groundBodyDef;
+	groundBodyDef.position.Set(PIXELS_TO_METERS(500), PIXELS_TO_METERS(450));
+	b2Body* groundBody = myWorld->CreateBody(&groundBodyDef);
+	b2CircleShape circle;
+	circle.m_radius = PIXELS_TO_METERS(250);
+	b2FixtureDef fixture;
+	fixture.shape = &circle;
+	groundBody->CreateFixture(&fixture);
+
+	//GROUND
+	b2BodyDef groundBodyDef2;
+	groundBodyDef2.type = b2_staticBody;
+	groundBodyDef2.position.Set(PIXELS_TO_METERS(500), PIXELS_TO_METERS(10));
+	b2Body* groundBody3 = myWorld->CreateBody(&groundBodyDef2);
+	b2PolygonShape groundBox;
 	groundBox.SetAsBox(50.0f, 10.0f);
-	groundBody->CreateFixture(&groundBox, 0.0f);
-	
+	groundBody3->CreateFixture(&groundBox, 0.0f);
 	return true;
 }
 
@@ -62,6 +77,22 @@ update_status ModulePhysics::PostUpdate()
 	// TODO 5: On space bar press, create a circle on mouse position
 	// - You need to transform the position / radius
 
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+	{
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(PIXELS_TO_METERS(App->input->GetMouseX()), PIXELS_TO_METERS(App->input->GetMouseY()));
+		b2Body* groundBody2 = myWorld->CreateBody(&bodyDef);
+		b2CircleShape miniCircle;
+		float randomradius = 0;
+		randomradius = (rand() % 100) + 1;
+		miniCircle.m_radius = PIXELS_TO_METERS(randomradius);
+		b2FixtureDef fixture2;
+		fixture2.shape = &miniCircle;
+		groundBody2->CreateFixture(&fixture2);
+	}
+		
+
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
 
@@ -70,8 +101,8 @@ update_status ModulePhysics::PostUpdate()
 
 	// Bonus code: this will iterate all objects in the world and draw the circles
 	// You need to provide your own macro to translate meters to pixels
-	/*
-	for(b2Body* b = world->GetBodyList(); b; b = b->GetNext())
+	
+	for(b2Body* b = myWorld->GetBodyList(); b; b = b->GetNext())
 	{
 		for(b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
 		{
@@ -84,11 +115,17 @@ update_status ModulePhysics::PostUpdate()
 					App->renderer->DrawCircle(METERS_TO_PIXELS(pos.x), METERS_TO_PIXELS(pos.y), METERS_TO_PIXELS(shape->m_radius), 255, 255, 255);
 				}
 				break;
+				case b2Shape::e_polygon:
+				{
+					b2PolygonShape* shape = (b2PolygonShape*)f->GetShape();
+					b2Vec2 pos = f->GetBody()->GetPosition();					//App->renderer->DrawPolygon(shape->m_type, METERS_TO_PIXELS(pos.x), 255, 255, 255, true, true);
+				}
+				break;
 
 				// You will have to add more cases to draw boxes, edges, and polygons ...
 			}
 		}
-	}*/
+	}
 
 	return UPDATE_CONTINUE;
 }
