@@ -42,7 +42,7 @@ bool ModulePhysics::Start()
 	
 	//BIGCIRCLE
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(PIXELS_TO_METERS(500), PIXELS_TO_METERS(450));
+	groundBodyDef.position.Set(PIXELS_TO_METERS(500), PIXELS_TO_METERS(300));
 	b2Body* groundBody = myWorld->CreateBody(&groundBodyDef);
 	b2CircleShape circle;
 	circle.m_radius = PIXELS_TO_METERS(250);
@@ -53,11 +53,12 @@ bool ModulePhysics::Start()
 	//GROUND
 	b2BodyDef groundBodyDef2;
 	groundBodyDef2.type = b2_staticBody;
-	groundBodyDef2.position.Set(PIXELS_TO_METERS(500), PIXELS_TO_METERS(10));
+	groundBodyDef2.position.Set(PIXELS_TO_METERS(512), PIXELS_TO_METERS(800));
 	b2Body* groundBody3 = myWorld->CreateBody(&groundBodyDef2);
 	b2PolygonShape groundBox;
-	groundBox.SetAsBox(50.0f, 10.0f);
-	groundBody3->CreateFixture(&groundBox, 0.0f);
+	groundBox.SetAsBox(PIXELS_TO_METERS(100), PIXELS_TO_METERS(100));
+	groundBody3->CreateFixture(&groundBox, 0.0f);
+
 	return true;
 }
 
@@ -118,7 +119,13 @@ update_status ModulePhysics::PostUpdate()
 				case b2Shape::e_polygon:
 				{
 					b2PolygonShape* shape = (b2PolygonShape*)f->GetShape();
-					b2Vec2 pos = f->GetBody()->GetPosition();					//App->renderer->DrawPolygon(shape->m_type, METERS_TO_PIXELS(pos.x), 255, 255, 255, true, true);
+					b2Vec2 pos = f->GetBody()->GetPosition();
+					SDL_Rect rect;
+					rect.x = 412;
+					rect.y = 800;
+					rect.w = 200;
+					rect.h = -100;
+					App->renderer->DrawQuad(rect, 255, 255, 255, 255, false);
 				}
 				break;
 
