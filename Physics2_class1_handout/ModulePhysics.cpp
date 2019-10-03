@@ -119,13 +119,31 @@ update_status ModulePhysics::PostUpdate()
 				case b2Shape::e_polygon:
 				{
 					b2PolygonShape* shape = (b2PolygonShape*)f->GetShape();
-					b2Vec2 pos = f->GetBody()->GetPosition();
-					SDL_Rect rect;
+					int32 count = shape->GetVertexCount();
+					b2Vec2 prev = b->GetWorldPoint(shape->GetVertex(0)); 
+					b2Vec2 v;
+
+
+					for (int32 i = 0; i < count; i++)
+					{
+						v = b->GetWorldPoint(shape->GetVertex(i));
+
+						if(i > 0)
+						{
+							App->renderer->DrawLine(METERS_TO_PIXELS(prev.x), METERS_TO_PIXELS(prev.y), METERS_TO_PIXELS(v.x), METERS_TO_PIXELS(v.y), 255, 255, 255);
+							prev = v;
+						}
+					}
+
+					v = b->GetWorldPoint(shape->GetVertex(0));
+					App->renderer->DrawLine(METERS_TO_PIXELS(prev.x), METERS_TO_PIXELS(prev.y), METERS_TO_PIXELS(v.x), METERS_TO_PIXELS(v.y), 255, 255, 255);
+
+					/*SDL_Rect rect;
 					rect.x = 412;
 					rect.y = 800;
 					rect.w = 200;
-					rect.h = -100;
-					App->renderer->DrawQuad(rect, 255, 255, 255, 255, false);
+					rect.h = -100;*/
+					//App->renderer->DrawQuad(rect, 255, 255, 255, 255, false);
 				}
 				break;
 
