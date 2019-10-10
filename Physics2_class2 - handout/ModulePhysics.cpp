@@ -62,103 +62,6 @@ update_status ModulePhysics::PreUpdate()
 // 
 update_status ModulePhysics::PostUpdate()
 {
-	// On space bar press, create a circle on mouse position
-	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-	{
-
-		CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 50, 1);
-
-		/*
-		b2BodyDef body;
-		body.type = b2_dynamicBody;
-		float radius = PIXEL_TO_METERS(25);
-		body.position.Set(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()));
-
-		b2Body* b = world->CreateBody(&body);
-
-		b2CircleShape shape;
-		shape.m_radius = radius;
-		b2FixtureDef fixture;
-		fixture.shape = &shape;
-
-		b->CreateFixture(&fixture);
-		*/
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
-	{
-		// TODO 1: When pressing 2, create a box on the mouse position
-		b2BodyDef body2;
-		body2.type = b2_dynamicBody;
-		body2.position.Set(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()));
-
-		b2Body* b2 = world->CreateBody(&body2);
-
-		b2PolygonShape shape2;
-		shape2.SetAsBox(PIXEL_TO_METERS(25), PIXEL_TO_METERS(25));
-		b2FixtureDef fixture2;
-		fixture2.shape = &shape2;
-		fixture2.density = 1.0f;
-		b2->CreateFixture(&fixture2);
-		// TODO 2: To have the box behave normally, set fixture's density to 1.0f
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
-	{
-		// TODO 3: Create a chain shape using those vertices
-		// remember to convert them from pixels to meters!
-		
-		/*
-		int points[24]
-		{
-			-38, 80,
-			-44, -54,
-			-16, -60,
-			-16, -17,
-			19, -19,
-			19, -79,
-			61, -77,
-			57, 73,
-			17, 78,
-			20, 16,
-			-25, 13,
-			-9, 72
-		};
-
-		b2Vec2 a[24];
-		*/
-		
-		b2BodyDef chain;
-		chain.type = b2_dynamicBody;
-		chain.position.Set(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()));
-		b2Body* groundBody = world->CreateBody(&chain);
-		b2Vec2 points[60];
-
-		points[0].Set(PIXEL_TO_METERS(46), PIXEL_TO_METERS(131));
-		points[1].Set(PIXEL_TO_METERS(34), PIXEL_TO_METERS(137));
-		points[2].Set(PIXEL_TO_METERS(39), PIXEL_TO_METERS(125));
-		points[3].Set(PIXEL_TO_METERS(22), PIXEL_TO_METERS(124));		points[4].Set(PIXEL_TO_METERS(30), PIXEL_TO_METERS(115));
-		points[5].Set(PIXEL_TO_METERS(10), PIXEL_TO_METERS(103));
-		points[6].Set(PIXEL_TO_METERS(28), PIXEL_TO_METERS(91));
-		points[7].Set(PIXEL_TO_METERS(0), PIXEL_TO_METERS(76));		points[8].Set(PIXEL_TO_METERS(29), PIXEL_TO_METERS(62));		points[9].Set(PIXEL_TO_METERS(13), PIXEL_TO_METERS(35));		points[10].Set(PIXEL_TO_METERS(42), PIXEL_TO_METERS(39));		points[11].Set(PIXEL_TO_METERS(40), PIXEL_TO_METERS(0));		points[12].Set(PIXEL_TO_METERS(74), PIXEL_TO_METERS(32));
-		points[13].Set(PIXEL_TO_METERS(87), PIXEL_TO_METERS(4));
-		points[14].Set(PIXEL_TO_METERS(94), PIXEL_TO_METERS(40));
-		points[15].Set(PIXEL_TO_METERS(111), PIXEL_TO_METERS(34));		points[16].Set(PIXEL_TO_METERS(104), PIXEL_TO_METERS(57));
-		points[17].Set(PIXEL_TO_METERS(115), PIXEL_TO_METERS(66));
-		points[18].Set(PIXEL_TO_METERS(109), PIXEL_TO_METERS(73));
-		points[19].Set(PIXEL_TO_METERS(104), PIXEL_TO_METERS(93));		points[20].Set(PIXEL_TO_METERS(109), PIXEL_TO_METERS(99));		points[21].Set(PIXEL_TO_METERS(103), PIXEL_TO_METERS(105));		points[22].Set(PIXEL_TO_METERS(100), PIXEL_TO_METERS(114));		points[23].Set(PIXEL_TO_METERS(98), PIXEL_TO_METERS(126));		points[24].Set(PIXEL_TO_METERS(96), PIXEL_TO_METERS(135));		points[25].Set(PIXEL_TO_METERS(91), PIXEL_TO_METERS(140));		points[26].Set(PIXEL_TO_METERS(83), PIXEL_TO_METERS(148));		points[27].Set(PIXEL_TO_METERS(73), PIXEL_TO_METERS(149));		points[28].Set(PIXEL_TO_METERS(54), PIXEL_TO_METERS(140));		
-		
-		
-		b2ChainShape chains;
-		chains.CreateLoop(points, 29);		b2FixtureDef fixture;		fixture.shape = &chains;		groundBody->CreateFixture(&fixture);
-
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-		debug = !debug;
-
-	if(!debug)
-		return UPDATE_CONTINUE;
 
 	// Bonus code: this will iterate all objects in the world and draw the circles
 	// You need to provide your own macro to translate meters to pixels
@@ -247,10 +150,11 @@ bool ModulePhysics::CleanUp()
 	return true;
 }
 
-void ModulePhysics::CreateCircle(int x, int y, int radium, int type)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radium, int type)
 {
 
 	b2BodyDef body;
+
 	if(type == 1)
 	{
 		body.type = b2_dynamicBody;
@@ -271,5 +175,106 @@ void ModulePhysics::CreateCircle(int x, int y, int radium, int type)
 	fixture.shape = &shape;
 
 	b->CreateFixture(&fixture);
+
+	return new PhysBody(b);
+
+}
+
+void ModulePhysics::CreatePolygon(int x, int y, int type)
+{
+	b2BodyDef body2;
+
+	if (type == 1)
+	{
+		body2.type = b2_dynamicBody;
+	}
+	if (type == 2)
+	{
+		body2.type = b2_staticBody;
+	}
+	body2.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
+	b2Body* b2 = world->CreateBody(&body2);
+
+	b2PolygonShape shape2;
+	shape2.SetAsBox(PIXEL_TO_METERS(25), PIXEL_TO_METERS(25));
+	b2FixtureDef fixture2;
+	fixture2.shape = &shape2;
+	fixture2.density = 1.0f;
+
+	b2->CreateFixture(&fixture2);
+
+	
+}
+
+void ModulePhysics::CreateChain(int x, int y, int type)
+{
+	b2BodyDef chain;
+
+	if (type == 1)
+	{
+		chain.type = b2_dynamicBody;
+	}
+	if (type == 2)
+	{
+		chain.type = b2_staticBody;
+	}
+
+	chain.position.Set(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()));
+	b2Body* groundBody = world->CreateBody(&chain);
+	b2Vec2 points[60];
+
+	points[0].Set(PIXEL_TO_METERS(46), PIXEL_TO_METERS(131));
+	points[1].Set(PIXEL_TO_METERS(34), PIXEL_TO_METERS(137));
+	points[2].Set(PIXEL_TO_METERS(39), PIXEL_TO_METERS(125));
+	points[3].Set(PIXEL_TO_METERS(22), PIXEL_TO_METERS(124));
+	points[4].Set(PIXEL_TO_METERS(30), PIXEL_TO_METERS(115));
+	points[5].Set(PIXEL_TO_METERS(10), PIXEL_TO_METERS(103));
+	points[6].Set(PIXEL_TO_METERS(28), PIXEL_TO_METERS(91));
+	points[7].Set(PIXEL_TO_METERS(0), PIXEL_TO_METERS(76));
+	points[8].Set(PIXEL_TO_METERS(29), PIXEL_TO_METERS(62));
+	points[9].Set(PIXEL_TO_METERS(13), PIXEL_TO_METERS(35));
+	points[10].Set(PIXEL_TO_METERS(42), PIXEL_TO_METERS(39));
+	points[11].Set(PIXEL_TO_METERS(40), PIXEL_TO_METERS(0));
+	points[12].Set(PIXEL_TO_METERS(74), PIXEL_TO_METERS(32));
+	points[13].Set(PIXEL_TO_METERS(87), PIXEL_TO_METERS(4));
+	points[14].Set(PIXEL_TO_METERS(94), PIXEL_TO_METERS(40));
+	points[15].Set(PIXEL_TO_METERS(111), PIXEL_TO_METERS(34));
+	points[16].Set(PIXEL_TO_METERS(104), PIXEL_TO_METERS(57));
+	points[17].Set(PIXEL_TO_METERS(115), PIXEL_TO_METERS(66));
+	points[18].Set(PIXEL_TO_METERS(109), PIXEL_TO_METERS(73));
+	points[19].Set(PIXEL_TO_METERS(104), PIXEL_TO_METERS(93));
+	points[20].Set(PIXEL_TO_METERS(109), PIXEL_TO_METERS(99));
+	points[21].Set(PIXEL_TO_METERS(103), PIXEL_TO_METERS(105));
+	points[22].Set(PIXEL_TO_METERS(100), PIXEL_TO_METERS(114));
+	points[23].Set(PIXEL_TO_METERS(98), PIXEL_TO_METERS(126));
+	points[24].Set(PIXEL_TO_METERS(96), PIXEL_TO_METERS(135));
+	points[25].Set(PIXEL_TO_METERS(91), PIXEL_TO_METERS(140));
+	points[26].Set(PIXEL_TO_METERS(83), PIXEL_TO_METERS(148));
+	points[27].Set(PIXEL_TO_METERS(73), PIXEL_TO_METERS(149));
+	points[28].Set(PIXEL_TO_METERS(54), PIXEL_TO_METERS(140));
+
+
+	b2ChainShape chains;
+	chains.CreateLoop(points, 29);
+	b2FixtureDef fixture;
+	fixture.shape = &chains;
+	groundBody->CreateFixture(&fixture);
+}
+
+void PhysBody::GetPosition(int& x, int& y) const
+{
+	b2Vec2 pos;
+	pos = body_pointer->GetPosition();
+
+	x = METERS_TO_PIXELS(pos.x) - (width);
+	y = METERS_TO_PIXELS(pos.y) - (height);
+}
+
+void PhysBody::GetRotation(float& angl) 
+{
+
+	angl = body_pointer->GetAngle() * 57.2957f;
+	LOG("Circle angle %f", angl);
 
 }
